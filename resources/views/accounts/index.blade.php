@@ -3,42 +3,72 @@
 @section('header', 'سجلات المرضى')
 
 @section('content')
-    <div class="bg-white p-6 rounded-xl shadow-lg">
+    <div class="card p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-800">قائمة المرضى</h2>
-            <a href="{{ route('patients.create') }}" class="bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-green-600 transition shadow-md">
+            <h2 class="section-title">قائمة المرضى</h2>
+            <a href="{{ route('patients.create') }}" class="btn btn-primary">
                 + إضافة مريض جديد
             </a>
         </div>
 
-        <div class="overflow-x-auto rounded-lg border border-gray-200">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+        <form method="GET" action="{{ route('patients.index') }}" class="mb-4">
+            <div class="flex flex-col md:flex-row md:items-end gap-3">
+                <div class="flex-1">
+                    <label for="patient_name" class="label">اسم المريض</label>
+                    <input
+                        type="text"
+                        id="patient_name"
+                        name="patient_name"
+                        value="{{ request('patient_name') }}"
+                        placeholder="ابحث باسم المريض"
+                        class="input"
+                    />
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        بحث
+                    </button>
+                    @if(request()->filled('patient_name'))
+                        <a href="{{ route('patients.index') }}" class="btn btn-outline">
+                            مسح
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </form>
+
+        <div class="overflow-x-auto rounded-lg border border-gray-800/60">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الاسم</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الهاتف</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ الميلاد</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">الإجراءات</th>
+                        <th class="text-right">الاسم</th>
+                        <th class="text-right">الهاتف</th>
+                        <th class="text-right">تاريخ الميلاد</th>
+                        <th class="text-left">الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody>
                     @foreach($patients as $patient)
-                        <tr class="hover:bg-gray-50 transition cursor-pointer" onclick="window.location='{{ route('patients.show', $patient->id) }}'">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $patient->fullName }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $patient->phoneNumber }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $patient->dob->format('Y-m-d') }}</td>
-                            <td class="px-6 py-4 text-left space-x-2 space-x-reverse" onclick="event.stopPropagation()">
-                                <a href="{{ route('patients.show', $patient->id) }}" class="text-accent hover:underline">عرض</a>
-                                <a href="{{ route('patients.edit', $patient->id) }}" class="text-yellow-500 hover:underline">تعديل</a>
+                        <tr class="transition cursor-pointer" onclick="window.location='{{ route('patients.show', $patient->id) }}'">
+                            <td class="text-sm font-medium text-gray-100">{{ $patient->fullName }}</td>
+                            <td class="text-sm text-gray-400">{{ $patient->phoneNumber }}</td>
+                            <td class="text-sm text-gray-400">{{ $patient->dob->format('Y-m-d') }}</td>
+                            <td class="text-left space-x-3 space-x-reverse" onclick="event.stopPropagation()">
+                                <a href="{{ route('patients.show', $patient->id) }}" class="link">عرض</a>
+                                <a href="{{ route('patients.edit', $patient->id) }}" class="link">تعديل</a>
                                 <form id="delete-patient-{{ $patient->id }}" action="{{ route('patients.destroy', $patient->id) }}" method="POST" class="d-inline inline">
                                     @csrf @method('DELETE')
-                                    <button type="button" class="text-danger hover:underline" onclick="confirmDelete('delete-patient-{{ $patient->id }}')">حذف</button>
+                                    <button type="button" class="link link-danger" onclick="confirmDelete('delete-patient-{{ $patient->id }}')">حذف</button>
                                 </form>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        <div class="mt-4">
+            {{ $patients->links('vendor.pagination.dark') }}
         </div>
     </div>
 @endsection

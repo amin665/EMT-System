@@ -14,10 +14,14 @@ class DashboardController extends Controller
         
         // Stats for the dashboard
         $totalPatients = Patient::where('createdBy', $user->id)->count();
-        $todayAppointments = Appointment::where('doctorID', $user->id)
-                                        ->whereDate('date', today())
-                                        ->get();
+        $todayAppointmentsQuery = Appointment::where('doctorID', $user->id)
+            ->whereDate('date', today())
+            ->with('patient')
+            ->orderBy('date', 'asc');
 
-        return view('transactions.dashboard', compact('totalPatients', 'todayAppointments'));
+        $todayAppointmentsCount = (clone $todayAppointmentsQuery)->count();
+        $todayAppointments = $todayAppointmentsQuery->paginate(10);
+
+        return view('transactions.dashboard', compact('totalPatients', 'todayAppointments', 'todayAppointmentsCount'));
     }
 }

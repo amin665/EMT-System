@@ -3,44 +3,93 @@
 @section('header', 'إدارة المواعيد')
 
 @section('content')
-    <div class="bg-white p-6 rounded-xl shadow-lg">
+    <div class="card p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-800">جدول المواعيد</h2>
-            <a href="{{ route('appointments.create') }}" class="bg-accent text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-600 transition shadow-md">
+            <h2 class="section-title">جدول المواعيد</h2>
+            <a href="{{ route('appointments.create') }}" class="btn btn-primary">
                 + موعد جديد
             </a>
         </div>
 
-        <div class="overflow-x-auto rounded-lg border border-gray-200">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+        <form method="GET" action="{{ route('appointments.index') }}" class="mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:items-end">
+                <div>
+                    <label for="patient_name" class="label">اسم المريض</label>
+                    <input
+                        type="text"
+                        id="patient_name"
+                        name="patient_name"
+                        value="{{ request('patient_name') }}"
+                        placeholder="ابحث باسم المريض"
+                        class="input"
+                    />
+                </div>
+                <div>
+                    <label for="date" class="label">التاريخ</label>
+                    <input
+                        type="date"
+                        id="date"
+                        name="date"
+                        value="{{ request('date') }}"
+                        class="input"
+                    />
+                </div>
+                <div>
+                    <label for="time" class="label">الوقت</label>
+                    <input
+                        type="time"
+                        id="time"
+                        name="time"
+                        value="{{ request('time') }}"
+                        class="input"
+                    />
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        بحث
+                    </button>
+                    @if(request()->filled('patient_name') || request()->filled('date') || request()->filled('time'))
+                        <a href="{{ route('appointments.index') }}" class="btn btn-outline">
+                            مسح
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </form>
+
+        <div class="overflow-x-auto rounded-lg border border-gray-800/60">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الوقت</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">المريض</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">الإجراءات</th>
+                        <th class="text-right">الوقت</th>
+                        <th class="text-right">المريض</th>
+                        <th class="text-right">الحالة</th>
+                        <th class="text-left">الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody>
                     @foreach($appointments as $apt)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $apt->date->format('Y-m-d H:i') }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $apt->patient->fullName }}</td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full 
-                                    {{ $apt->status == 'Scheduled' ? 'bg-blue-100 text-blue-800' : '' }}
-                                    {{ $apt->status == 'Done' ? 'bg-green-100 text-green-800' : '' }}
-                                    {{ $apt->status == 'Canceled' ? 'bg-red-100 text-red-800' : '' }}
-                                    {{ $apt->status == 'Delayed' ? 'bg-yellow-100 text-yellow-800' : '' }}">
-                                    {{ $apt->status }}
-                                </span>
+                        @php
+                            $statusClass = match($apt->status) {
+                                'Scheduled' => 'badge-info',
+                                'Done' => 'badge-success',
+                                'Canceled' => 'badge-danger',
+                                'Delayed' => 'badge-warning',
+                                default => 'badge-neutral',
+                            };
+                        @endphp
+                        <tr>
+                            <td class="text-sm font-medium text-gray-100">{{ $apt->date->format('Y-m-d H:i') }}</td>
+                            <td class="text-sm text-gray-400">{{ $apt->patient->fullName }}</td>
+                            <td>
+                                <span class="badge {{ $statusClass }}">{{ $apt->status }}</span>
                             </td>
-                            <td class="px-6 py-4 text-left space-x-2 space-x-reverse">
-                                <a href="{{ route('appointments.edit', $apt->id) }}" class="text-yellow-600 hover:underline">تعديل</a>
+                            <td class="text-left space-x-3 space-x-reverse">
+                                <a href="{{ route('appointments.edit', $apt->id) }}" class="link">تعديل</a>
                                 @if($apt->status != 'Canceled')
                                     <form id="cancel-apt-{{ $apt->id }}" action="{{ route('appointments.destroy', $apt->id) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="button" class="text-danger hover:underline" onclick="confirmDelete('cancel-apt-{{ $apt->id }}')">إلغاء</button>
+                                        <button type="button" class="link link-danger" onclick="confirmDelete('cancel-apt-{{ $apt->id }}')">إلغاء</button>
                                     </form>
                                 @endif
                             </td>
@@ -48,6 +97,10 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        <div class="mt-4">
+            {{ $appointments->links('vendor.pagination.dark') }}
         </div>
     </div>
 @endsection

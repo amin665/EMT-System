@@ -9,9 +9,16 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $patients = Patient::where('createdBy', auth()->id())->get();
+        $patientsQuery = Patient::where('createdBy', auth()->id());
+
+        if ($request->filled('patient_name')) {
+            $name = trim($request->query('patient_name'));
+            $patientsQuery->where('fullName', 'like', '%' . $name . '%');
+        }
+
+        $patients = $patientsQuery->orderBy('fullName')->paginate(10)->withQueryString();
         // CHANGED: patients.index -> accounts.index
         return view('accounts.index', compact('patients'));
     }

@@ -11,15 +11,34 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AppointmentConfirmation;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $appointments = Appointment::where('doctorID', auth()->id())
-                                   ->with('patient')
-                                   ->orderBy('date', 'asc')
-                                   ->get();
+        $appointmentsQuery = Appointment::where('doctorID', auth()->id())
+            ->with('patient');
+
+        if ($request->filled('patient_name')) {
+            $name = trim($request->query('patient_name'));
+            $appointmentsQuery->whereHas('patient', function ($query) use ($name) {
+                $query->where('fullName', 'like', '%' . $name . '%');
+            });
+        }
+
+        if ($request->filled('date')) {
+            $appointmentsQuery->whereDate('date', $request->query('date'));
+        }
+
+        if ($request->filled('time')) {
+            $appointmentsQuery->whereTime('date', $request->query('time'));
+        }
+
+        $appointments = $appointmentsQuery->orderBy('date', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('transactions.index', compact('appointments'));
     }
 
