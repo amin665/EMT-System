@@ -38,14 +38,28 @@
             --muted: #94a3b8;
             --accent: #fb7185;
             --accent-strong: #f43f5e;
+            --accent-rgb: 244, 63, 94;
             --success: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
         }
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --bg-2: #eef2f7;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+        }
+        html[data-theme="dark"] { color-scheme: dark; }
+        html[data-theme="light"] { color-scheme: light; }
         body {
             font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
-            background: radial-gradient(1200px 800px at 10% 0%, rgba(251, 113, 133, 0.08), transparent 60%),
-                        radial-gradient(900px 600px at 90% 10%, rgba(56, 189, 248, 0.07), transparent 55%),
+            background: radial-gradient(1200px 800px at 10% 0%, rgba(var(--accent-rgb), 0.12), transparent 60%),
+                        radial-gradient(900px 600px at 90% 10%, rgba(56, 189, 248, 0.08), transparent 55%),
                         var(--bg);
             color: var(--text);
         }
@@ -61,14 +75,19 @@
         }
         input, textarea, select { text-align: right; }
         input::placeholder, textarea::placeholder { color: rgba(148, 163, 184, 0.7); }
-        input[type="date"],
-        input[type="time"],
-        input[type="datetime-local"] {
+        html[data-theme="dark"] input[type="date"],
+        html[data-theme="dark"] input[type="time"],
+        html[data-theme="dark"] input[type="datetime-local"] {
             color-scheme: dark;
+        }
+        html[data-theme="light"] input[type="date"],
+        html[data-theme="light"] input[type="time"],
+        html[data-theme="light"] input[type="datetime-local"] {
+            color-scheme: light;
         }
         .app-shell { position: relative; z-index: 1; }
         .sidebar {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 23, 0.98));
+            background: linear-gradient(180deg, var(--surface), var(--surface-2));
             border-left: 1px solid var(--border);
             backdrop-filter: blur(14px);
         }
@@ -87,8 +106,8 @@
         }
         .sidebar-link.is-active {
             color: #fff;
-            background: rgba(244, 63, 94, 0.18);
-            box-shadow: inset 0 0 0 1px rgba(244, 63, 94, 0.35);
+            background: rgba(var(--accent-rgb), 0.18);
+            box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.35);
         }
         .app-main { background: transparent; }
         .page-title { color: #f8fafc; letter-spacing: -0.01em; }
@@ -101,13 +120,13 @@
             font-size: 0.85rem;
         }
         .card {
-            background: linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(11, 18, 32, 0.98));
+            background: linear-gradient(180deg, var(--surface), var(--surface-2));
             border: 1px solid var(--border);
             border-radius: 18px;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+            box-shadow: var(--shadow);
         }
         .card-muted {
-            background: rgba(15, 23, 42, 0.8);
+            background: var(--surface-2);
         }
         .section-title {
             font-size: 1.1rem;
@@ -125,7 +144,7 @@
         .select,
         .textarea {
             width: 100%;
-            background: #0b1220;
+            background: var(--surface-2);
             border: 1px solid var(--border);
             color: var(--text);
             border-radius: 12px;
@@ -136,8 +155,8 @@
         .select:focus,
         .textarea:focus {
             outline: none;
-            border-color: rgba(244, 63, 94, 0.7);
-            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
+            border-color: rgba(var(--accent-rgb), 0.7);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
         }
         .input:disabled,
         .select:disabled,
@@ -161,16 +180,16 @@
         .btn-primary {
             background: var(--accent-strong);
             color: #fff;
-            box-shadow: 0 12px 24px rgba(244, 63, 94, 0.25);
+            box-shadow: 0 12px 24px rgba(var(--accent-rgb), 0.25);
         }
         .btn-primary:hover { background: var(--accent); }
         .btn-outline {
             border: 1px solid var(--border);
             color: var(--text);
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(148, 163, 184, 0.08);
         }
         .btn-outline:hover {
-            border-color: rgba(244, 63, 94, 0.6);
+            border-color: rgba(var(--accent-rgb), 0.6);
             color: #fff;
         }
         .btn-danger {
@@ -192,7 +211,7 @@
             letter-spacing: 0.08em;
             font-size: 0.7rem;
             color: var(--muted);
-            background: #0f1624;
+            background: var(--surface-2);
             border-bottom: 1px solid var(--border);
             padding: 0.85rem 1rem;
         }
@@ -221,7 +240,7 @@
             border: 1px solid var(--border);
             padding: 1rem 1.1rem;
             color: var(--text);
-            background: rgba(15, 23, 42, 0.7);
+            background: var(--surface-2);
         }
         .alert-info { border-color: rgba(56, 189, 248, 0.35); background: rgba(14, 116, 144, 0.16); }
         .pagination {
@@ -237,14 +256,14 @@
             border-radius: 10px;
             border: 1px solid var(--border);
             color: var(--muted);
-            background: rgba(15, 23, 42, 0.6);
+            background: var(--surface-2);
             transition: all 0.2s ease;
         }
-        .pagination-link:hover { color: #fff; border-color: rgba(244, 63, 94, 0.5); }
+        .pagination-link:hover { color: #fff; border-color: rgba(var(--accent-rgb), 0.5); }
         .pagination-link.is-active {
-            background: rgba(244, 63, 94, 0.18);
+            background: rgba(var(--accent-rgb), 0.18);
             color: #fff;
-            border-color: rgba(244, 63, 94, 0.6);
+            border-color: rgba(var(--accent-rgb), 0.6);
         }
         .pagination-link.is-disabled { opacity: 0.45; cursor: not-allowed; }
         .animate-fade {
@@ -256,7 +275,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .swal2-popup {
-            background: #0f172a;
+            background: var(--surface);
             color: var(--text);
             border: 1px solid var(--border);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
@@ -278,6 +297,48 @@
             font-weight: 600;
             border: 1px solid var(--border);
         }
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            background: rgba(15, 23, 42, 0.3);
+            transition: all 0.2s ease;
+        }
+        .theme-toggle.is-active {
+            color: var(--text);
+            border-color: rgba(var(--accent-rgb), 0.6);
+            background: rgba(var(--accent-rgb), 0.12);
+        }
+        .accent-swatch {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            border: 2px solid transparent;
+            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.2);
+            transition: all 0.2s ease;
+        }
+        .accent-swatch.is-active {
+            border-color: rgba(var(--accent-rgb), 0.8);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
+        }
+        .text-gray-100,
+        .text-gray-800 { color: var(--text) !important; }
+        .text-gray-300,
+        .text-gray-400,
+        .text-gray-700 { color: var(--muted) !important; }
+        .text-sky-100 { color: var(--text) !important; }
+        .text-sky-200 { color: var(--muted) !important; }
+        .bg-gray-100 { background-color: var(--bg-2) !important; }
+        .bg-white { background-color: var(--surface) !important; }
+        .border-gray-300,
+        .border-gray-700,
+        .border-gray-800\/60 { border-color: var(--border) !important; }
+        .text-primary { color: var(--accent-strong) !important; }
+        .bg-primary { background-color: var(--accent-strong) !important; }
     </style>
 </head>
 <body class="app-shell h-screen overflow-hidden flex">
@@ -332,6 +393,51 @@
 
     <!-- SweetAlert Logic -->
     <script>
+        (function () {
+            const storedTheme = localStorage.getItem('emt-theme') || 'dark';
+            const storedAccent = localStorage.getItem('emt-accent') || '#F43F5E';
+
+            function clampChannel(value) {
+                return Math.max(0, Math.min(255, value));
+            }
+
+            function hexToRgb(hex) {
+                const cleaned = hex.replace('#', '');
+                if (cleaned.length !== 6) return { r: 244, g: 63, b: 94 };
+                const r = parseInt(cleaned.slice(0, 2), 16);
+                const g = parseInt(cleaned.slice(2, 4), 16);
+                const b = parseInt(cleaned.slice(4, 6), 16);
+                return { r, g, b };
+            }
+
+            function adjustColor(hex, amount) {
+                const { r, g, b } = hexToRgb(hex);
+                const nr = clampChannel(r + amount);
+                const ng = clampChannel(g + amount);
+                const nb = clampChannel(b + amount);
+                return `#${nr.toString(16).padStart(2, '0')}${ng.toString(16).padStart(2, '0')}${nb.toString(16).padStart(2, '0')}`;
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.dataset.theme = theme;
+            }
+
+            function applyAccent(color) {
+                const strong = adjustColor(color, -10);
+                const soft = adjustColor(color, 24);
+                const { r, g, b } = hexToRgb(strong);
+                document.documentElement.style.setProperty('--accent-strong', strong);
+                document.documentElement.style.setProperty('--accent', soft);
+                document.documentElement.style.setProperty('--accent-rgb', `${r}, ${g}, ${b}`);
+            }
+
+            applyTheme(storedTheme);
+            applyAccent(storedAccent);
+
+            window.__applyEmtTheme = applyTheme;
+            window.__applyEmtAccent = applyAccent;
+        })();
+
         // Success Message
         @if(session('success'))
             Swal.fire({
@@ -384,6 +490,49 @@
             })
             return false;
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const themeButtons = document.querySelectorAll('[data-theme-option]');
+            const accentButtons = document.querySelectorAll('[data-accent-option]');
+            const accentPicker = document.querySelector('[data-accent-picker]');
+            const storedTheme = localStorage.getItem('emt-theme') || 'dark';
+            const storedAccent = localStorage.getItem('emt-accent') || '#F43F5E';
+
+            themeButtons.forEach((button) => {
+                const value = button.getAttribute('data-theme-option');
+                button.classList.toggle('is-active', value === storedTheme);
+                button.addEventListener('click', () => {
+                    localStorage.setItem('emt-theme', value);
+                    window.__applyEmtTheme(value);
+                    themeButtons.forEach((item) => item.classList.remove('is-active'));
+                    button.classList.add('is-active');
+                });
+            });
+
+            accentButtons.forEach((button) => {
+                const value = button.getAttribute('data-accent-option');
+                button.classList.toggle('is-active', value.toLowerCase() === storedAccent.toLowerCase());
+                button.addEventListener('click', () => {
+                    localStorage.setItem('emt-accent', value);
+                    window.__applyEmtAccent(value);
+                    accentButtons.forEach((item) => item.classList.remove('is-active'));
+                    button.classList.add('is-active');
+                    if (accentPicker) {
+                        accentPicker.value = value;
+                    }
+                });
+            });
+
+            if (accentPicker) {
+                accentPicker.value = storedAccent;
+                accentPicker.addEventListener('input', (event) => {
+                    const value = event.target.value;
+                    localStorage.setItem('emt-accent', value);
+                    window.__applyEmtAccent(value);
+                    accentButtons.forEach((item) => item.classList.remove('is-active'));
+                });
+            }
+        });
     </script>
 </body>
 </html>

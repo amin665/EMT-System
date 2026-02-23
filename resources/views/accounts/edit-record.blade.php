@@ -17,6 +17,11 @@
                     <label class="label">الوصفة الطبية</label>
                     <input type="text" name="prescription" value="{{ $medicalRecord->prescription }}" class="input" required>
                 </div>
+
+                <div class="md:col-span-2">
+                    <label class="label">الادوية</label>
+                    <input type="text" name="medicines" value="{{ $medicalRecord->medicines }}" class="input">
+                </div>
                 
                 <div class="md:col-span-2">
                     <label class="label">ملاحظات المتابعة</label>

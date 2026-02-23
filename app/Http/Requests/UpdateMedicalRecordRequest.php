@@ -13,6 +13,7 @@ class UpdateMedicalRecordRequest extends FormRequest
         return [
             'diagnosis' => 'required|string',
             'prescription' => 'required|string',
+            'medicines' => 'nullable|string',
             'followUpNotes' => 'nullable|string',
         ];
     }

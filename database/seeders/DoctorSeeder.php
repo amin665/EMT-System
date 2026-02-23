@@ -24,5 +24,15 @@ class DoctorSeeder extends Seeder
                 'telegram_message_template' => 'Hello {patient}, your appointment is tomorrow at {time}.',
             ]
         );
+        User::firstOrCreate(
+            ['username' => 'test'], 
+            [
+                'name' => 'Dr. dbtest',
+                'email' => 'test@emt.ly',
+                'password' => 'password', 
+                'specialization' => 'General Medicine',
+                'telegram_message_template' => 'Hello {patient}, your appointment is tomorrow at {time}.',
+            ]
+        );
     }
 }

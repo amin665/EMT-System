@@ -14,6 +14,7 @@ class StoreMedicalRecordRequest extends FormRequest
             'patientID' => 'required|exists:patients,id',
             'diagnosis' => 'required|string',
             'prescription' => 'required|string',
+            'medicines' => 'nullable|string',
             'followUpNotes' => 'nullable|string',
         ];
     }

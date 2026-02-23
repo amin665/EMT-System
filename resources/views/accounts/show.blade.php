@@ -40,6 +40,10 @@
                     <input type="text" name="prescription" class="input" required>
                 </div>
                 <div class="md:col-span-2">
+                    <label class="label">الادوية</label>
+                    <input type="text" name="medicines" class="input">
+                </div>
+                <div class="md:col-span-2">
                     <label class="label">ملاحظات</label>
                     <textarea name="followUpNotes" class="textarea"></textarea>
                 </div>
@@ -64,6 +68,9 @@
                 </div>
                 <h4 class="font-bold text-lg mt-2 text-gray-100">{{ $record->diagnosis }}</h4>
                 <p class="text-gray-300 mb-2"><strong>Rx:</strong> {{ $record->prescription }}</p>
+                @if(!empty($record->medicines))
+                    <p class="text-gray-300 mb-2"><strong>الادوية:</strong> {{ $record->medicines }}</p>
+                @endif
                 <p class="text-gray-400 text-sm card-muted p-2 rounded">{{ $record->followUpNotes }}</p>
             </div>
         @empty

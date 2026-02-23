@@ -14,6 +14,7 @@ class MedicalRecord extends Model
         'doctorID',
         'diagnosis',
         'prescription',
+        'medicines',
         'followUpNotes',
     ];
 
