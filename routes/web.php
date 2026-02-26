@@ -31,6 +31,7 @@ Route::middleware(['auth'])->group(function () {
     // Appointments Resource (read-only for doctors)
     Route::resource('appointments', AppointmentController::class)->only(['index']);
 
+    Route::post('/transcribe', [TranscriptionController::class, 'transcribe'])->name('transcribe');    
     // Settings
     Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
