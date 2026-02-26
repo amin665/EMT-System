@@ -7,7 +7,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\SettingController;
-
+use App\Http\Controllers\TranscriptionController;
 // Auth Routes
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.post');

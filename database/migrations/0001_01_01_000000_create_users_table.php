@@ -12,10 +12,11 @@ return new class extends Migration
             $table->id(); // This acts as doctorID
             $table->string('name');
             $table->string('username')->unique();
-            $table->string('email')->unique(); // Added for password reset scenarios
+            $table->string('email')->unique(); 
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('specialization')->nullable();
-            $table->text('telegram_message_template')->default('Your appointment is tomorrow at {time}.');
+            $table->string('telegram_message_template')->default('Your appointment is tomorrow at {time}.');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -34,5 +34,16 @@ class DoctorSeeder extends Seeder
                 'telegram_message_template' => 'Hello {patient}, your appointment is tomorrow at {time}.',
             ]
         );
+
+        User::firstOrCreate(
+        ['username' => 'dr_sara'], // Unique identifier
+        [
+            'name' => 'Dr. Sara Ahmed',
+            'email' => 'sara@emt.ly',
+            'password' => 'password',
+            'specialization' => 'Cardiology',
+            'telegram_message_template' => 'Dear {patient}, Dr. Sara is looking forward to seeing you at {time}.',
+        ]
+    );
     }
 }
