@@ -27,7 +27,7 @@
 
     <!-- Add Form (Hidden by default) -->
     <div id="addRecordForm" class="hidden card p-6 mb-6">
-        <form action="{{ route('medical-records.store-for-patient', $patient->id) }}" method="POST">
+        <form action="{{ route('medical-records.store-for-patient', $patient->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="patientID" value="{{ $patient->id }}">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -46,6 +46,10 @@
                 <div class="md:col-span-2">
                     <label class="label">ملاحظات</label>
                     <textarea name="followUpNotes" class="textarea"></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="label">مرفق (صورة او PDF)</label>
+                    <input type="file" name="attachment" class="input" accept="image/*,.pdf">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">حفظ السجل</button>
@@ -72,6 +76,18 @@
                     <p class="text-gray-300 mb-2"><strong>الادوية:</strong> {{ $record->medicines }}</p>
                 @endif
                 <p class="text-gray-400 text-sm card-muted p-2 rounded">{{ $record->followUpNotes }}</p>
+                @if(!empty($record->attachment_path))
+                    <div class="mt-3">
+                        <a href="{{ asset('storage/' . $record->attachment_path) }}" class="link" target="_blank" rel="noopener">
+                            عرض المرفق ({{ $record->attachment_original_name }})
+                        </a>
+                        @if(!empty($record->attachment_mime) && str_starts_with($record->attachment_mime, 'image/'))
+                            <div class="mt-3">
+                                <img src="{{ asset('storage/' . $record->attachment_path) }}" alt="Attachment" class="rounded-lg max-w-full">
+                            </div>
+                        @endif
+                    </div>
+                @endif
             </div>
         @empty
             <p class="text-gray-400 text-center py-4">لا توجد سجلات طبية.</p>

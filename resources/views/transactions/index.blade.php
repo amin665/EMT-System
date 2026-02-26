@@ -6,9 +6,6 @@
     <div class="card p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="section-title">جدول المواعيد</h2>
-            <a href="{{ route('appointments.create') }}" class="btn btn-primary">
-                + موعد جديد
-            </a>
         </div>
 
         <form method="GET" action="{{ route('appointments.index') }}" class="mb-4">
@@ -64,7 +61,6 @@
                         <th class="text-right">الوقت</th>
                         <th class="text-right">المريض</th>
                         <th class="text-right">الحالة</th>
-                        <th class="text-left">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,15 +79,6 @@
                             <td class="text-sm text-gray-400">{{ $apt->patient->fullName }}</td>
                             <td>
                                 <span class="badge {{ $statusClass }}">{{ $apt->status }}</span>
-                            </td>
-                            <td class="text-left space-x-3 space-x-reverse">
-                                <a href="{{ route('appointments.edit', $apt->id) }}" class="link">تعديل</a>
-                                @if($apt->status != 'Canceled')
-                                    <form id="cancel-apt-{{ $apt->id }}" action="{{ route('appointments.destroy', $apt->id) }}" method="POST" class="inline">
-                                        @csrf @method('DELETE')
-                                        <button type="button" class="link link-danger" onclick="confirmDelete('cancel-apt-{{ $apt->id }}')">إلغاء</button>
-                                    </form>
-                                @endif
                             </td>
                         </tr>
                     @endforeach

@@ -6,6 +6,7 @@ use App\Models\MedicalRecord;
 use App\Models\AuditLog;
 use App\Http\Requests\StoreMedicalRecordRequest;
 use App\Http\Requests\UpdateMedicalRecordRequest;
+use Illuminate\Support\Facades\Storage;
 
 class MedicalRecordController extends Controller
 {
@@ -13,6 +14,13 @@ class MedicalRecordController extends Controller
     {
         $data = $request->validated();
         $data['doctorID'] = auth()->id();
+
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $data['attachment_path'] = $file->store('medical-records', 'public');
+            $data['attachment_original_name'] = $file->getClientOriginalName();
+            $data['attachment_mime'] = $file->getClientMimeType();
+        }
 
         $record = MedicalRecord::create($data);
 
@@ -37,8 +45,20 @@ class MedicalRecordController extends Controller
     public function update(UpdateMedicalRecordRequest $request, MedicalRecord $medicalRecord)
     {
         if ($medicalRecord->doctorID !== auth()->id()) abort(403);
+        $data = $request->validated();
 
-        $medicalRecord->update($request->validated());
+        if ($request->hasFile('attachment')) {
+            if (!empty($medicalRecord->attachment_path)) {
+                Storage::disk('public')->delete($medicalRecord->attachment_path);
+            }
+
+            $file = $request->file('attachment');
+            $data['attachment_path'] = $file->store('medical-records', 'public');
+            $data['attachment_original_name'] = $file->getClientOriginalName();
+            $data['attachment_mime'] = $file->getClientMimeType();
+        }
+
+        $medicalRecord->update($data);
 
         // Audit Log
         AuditLog::create([
@@ -57,6 +77,11 @@ class MedicalRecordController extends Controller
         if ($medicalRecord->doctorID !== auth()->id()) abort(403);
         
         $patientID = $medicalRecord->patientID;
+
+        if (!empty($medicalRecord->attachment_path)) {
+            Storage::disk('public')->delete($medicalRecord->attachment_path);
+        }
+
         $medicalRecord->delete();
 
         // Audit Log (Record ID is null in table for deleted, but we log the event)

@@ -6,9 +6,6 @@
     <div class="card p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="section-title">قائمة المرضى</h2>
-            <a href="{{ route('patients.create') }}" class="btn btn-primary">
-                + إضافة مريض جديد
-            </a>
         </div>
 
         <form method="GET" action="{{ route('patients.index') }}" class="mb-4">
@@ -55,11 +52,6 @@
                             <td class="text-sm text-gray-400">{{ $patient->dob->format('Y-m-d') }}</td>
                             <td class="text-left space-x-3 space-x-reverse" onclick="event.stopPropagation()">
                                 <a href="{{ route('patients.show', $patient->id) }}" class="link">عرض</a>
-                                <a href="{{ route('patients.edit', $patient->id) }}" class="link">تعديل</a>
-                                <form id="delete-patient-{{ $patient->id }}" action="{{ route('patients.destroy', $patient->id) }}" method="POST" class="d-inline inline">
-                                    @csrf @method('DELETE')
-                                    <button type="button" class="link link-danger" onclick="confirmDelete('delete-patient-{{ $patient->id }}')">حذف</button>
-                                </form>
                             </td>
                         </tr>
                     @endforeach

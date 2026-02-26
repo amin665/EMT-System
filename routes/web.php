@@ -19,8 +19,8 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Patients Resource
-    Route::resource('patients', PatientController::class);
+    // Patients Resource (read-only for doctors)
+    Route::resource('patients', PatientController::class)->only(['index', 'show']);
 
     // Medical Records (Nested under patients conceptually, but simple CRUD works)
     // We will store/update records via these routes
@@ -28,8 +28,8 @@ Route::middleware(['auth'])->group(function () {
     // Specific route to store a record for a patient (easier for the view forms)
     Route::post('patients/{patient}/medical-records', [MedicalRecordController::class, 'store'])->name('medical-records.store-for-patient');
 
-    // Appointments Resource
-    Route::resource('appointments', AppointmentController::class);
+    // Appointments Resource (read-only for doctors)
+    Route::resource('appointments', AppointmentController::class)->only(['index']);
 
     // Settings
     Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');

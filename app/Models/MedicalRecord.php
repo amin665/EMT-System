@@ -16,6 +16,9 @@ class MedicalRecord extends Model
         'prescription',
         'medicines',
         'followUpNotes',
+        'attachment_path',
+        'attachment_original_name',
+        'attachment_mime',
     ];
 
     public function patient()

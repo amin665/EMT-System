@@ -16,6 +16,7 @@ class StoreMedicalRecordRequest extends FormRequest
             'prescription' => 'required|string',
             'medicines' => 'nullable|string',
             'followUpNotes' => 'nullable|string',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,pdf|max:10240',
         ];
     }
 }
