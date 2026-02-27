@@ -11,7 +11,7 @@ class MedicalTranscriber implements Agent
 
     public function instructions(): string
     {
-        return "You are a medical transcription assistant. Transcribe the provided audio into clean Arabic text expect medical terms. Focus on medical terms like (ضغط الدم، السكري).";
+        return "You are a medical transcription assistant. Transcribe the provided audio into clean Arabic text expect medical terms keep them in english. Focus on medical terms like (ضغط الدم، السكري).";
     }
 
     /**

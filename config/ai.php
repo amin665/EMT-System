@@ -81,7 +81,7 @@ return [
 
         'gemini' => [
             'driver' => 'gemini',
-            'key' => env('AIzaSyC-O8oTYY9ljPAzJG3A9geczhMJjidiCcQ'),
+            'key' => env('GEMINI_API_KEY'),
         ],
 
         'groq' => [
