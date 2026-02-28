@@ -1,3 +1,0 @@
-# This repository is a Laravel (PHP) application.
-# Python dependencies are not required for runtime deployment.
-# Keep this file for platforms that expect requirements.txt.
