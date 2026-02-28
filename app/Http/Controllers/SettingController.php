@@ -7,9 +7,20 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
-    public function edit()
+    public function edit(Request $request)
     {
         $user = auth()->user();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => [
+                    'id' => $user->id,
+                    'telegram_message_template' => $user->telegram_message_template,
+                ],
+            ], 200);
+        }
+
         return view('settings.edit', compact('user'));
     }
 
@@ -17,6 +28,16 @@ class SettingController extends Controller
     {
         $user = auth()->user();
         $user->update($request->validated());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => [
+                    'id' => $user->id,
+                    'telegram_message_template' => $user->telegram_message_template,
+                ],
+            ], 200);
+        }
 
         return back()->with('success', 'Telegram message template updated successfully.');
     }

@@ -39,6 +39,13 @@ class AppointmentController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $appointments,
+            ], 200);
+        }
+
         return view('transactions.index', compact('appointments'));
     }
 
@@ -54,7 +61,14 @@ class AppointmentController extends Controller
 
         $data['doctorID'] = auth()->id();
         
-        Appointment::create($data);
+        $appointment = Appointment::create($data);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 201,
+                'data' => $appointment,
+            ], 201);
+        }
 
         return redirect()->route('appointments.index')
                          ->with('success', 'Appointment scheduled successfully.');
@@ -83,6 +97,13 @@ class AppointmentController extends Controller
 
         $appointment->update($data);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $appointment->fresh(),
+            ], 200);
+        }
+
         return redirect()->route('appointments.index')->with('success', 'Appointment updated successfully.');
     }
 
@@ -92,6 +113,13 @@ class AppointmentController extends Controller
         
         // Set status to Canceled instead of deleting, to keep record
         $appointment->update(['status' => 'Canceled']);
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $appointment->fresh(),
+            ], 200);
+        }
         
         return redirect()->route('appointments.index')->with('success', 'Appointment canceled successfully.');
     }

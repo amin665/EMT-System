@@ -23,13 +23,15 @@ class TranscriptionController extends Controller
                 attachments: [$request->file('audio')]
             );
             return response()->json([
-                'success' => true,
-                'text' => (string) $response
-            ]);
+                'status_code' => 200,
+                'data' => [
+                    'text' => (string) $response,
+                ],
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false, 
-                'message' => 'Gemini Error: ' . $e->getMessage()
+                'status_code' => 500,
+                'reason' => $e->getMessage() ?: 'Transcription failed.'
             ], 500);
         }
     }

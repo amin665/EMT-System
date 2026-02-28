@@ -1,0 +1,310 @@
+{
+  "info": {
+    "name": "EMT System - Full Route Collection",
+    "description": "Postman collection generated from currently registered Laravel routes in routes/web.php.\n\nImportant notes:\n1) This project uses web/session auth + CSRF middleware (not token auth).\n2) Run 'Auth > 1. Get Login Page (CSRF)' first to capture csrf_token variable.\n3) Postman cookie jar will keep session cookies after login.\n4) After login, if CSRF mismatch happens on state-changing routes, refresh token by running a GET form page and updating csrf_token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "c4d0f2f7-0af4-4d72-9a03-emt-system-2026"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.upsert({ key: 'Accept', value: 'application/json' });",
+          "pm.request.headers.upsert({ key: 'X-Requested-With', value: 'XMLHttpRequest' });",
+          "const method = (pm.request.method || 'GET').toUpperCase();",
+          "if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {",
+          "  const csrf = pm.collectionVariables.get('csrf_token');",
+          "  if (csrf) pm.request.headers.upsert({ key: 'X-CSRF-TOKEN', value: csrf });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Get Login Page (CSRF)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let token = null;",
+                  "try {",
+                  "  const body = pm.response.json();",
+                  "  token = body && body.csrf_token ? body.csrf_token : null;",
+                  "} catch (e) {",
+                  "  const html = pm.response.text();",
+                  "  const match = html.match(/name=\\\"_token\\\"\\s+value=\\\"([^\\\"]+)\\\"/);",
+                  "  token = match && match[1] ? match[1] : null;",
+                  "}",
+                  "if (token) {",
+                  "  pm.collectionVariables.set('csrf_token', token);",
+                  "  console.log('csrf_token updated');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/login"
+          }
+        },
+        {
+          "name": "2. Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "_token", "value": "{{csrf_token}}", "type": "text" },
+                { "key": "username", "value": "{{username}}", "type": "text" },
+                { "key": "password", "value": "{{password}}", "type": "text" }
+              ]
+            },
+            "url": "{{base_url}}/login"
+          }
+        },
+        {
+          "name": "3. Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "_token", "value": "{{csrf_token}}", "type": "text" }
+              ]
+            },
+            "url": "{{base_url}}/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "List Patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/patients?patient_name={{patient_name}}"
+          }
+        },
+        {
+          "name": "Show Patient",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/patients/{{patient_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medical Records",
+      "item": [
+        {
+          "name": "Create Medical Record (resource route)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "patientID", "value": "{{patient_id}}", "type": "text" },
+                { "key": "diagnosis", "value": "Sample diagnosis", "type": "text" },
+                { "key": "prescription", "value": "Sample prescription", "type": "text" },
+                { "key": "medicines", "value": "Paracetamol 500mg", "type": "text" },
+                { "key": "followUpNotes", "value": "Follow up after 7 days", "type": "text" },
+                { "key": "attachment", "type": "file", "src": "{{attachment_file_path}}" }
+              ]
+            },
+            "url": "{{base_url}}/medical-records"
+          }
+        },
+        {
+          "name": "Create Medical Record (patient nested route)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "patientID", "value": "{{patient_id}}", "type": "text" },
+                { "key": "diagnosis", "value": "Sample diagnosis", "type": "text" },
+                { "key": "prescription", "value": "Sample prescription", "type": "text" },
+                { "key": "medicines", "value": "Paracetamol 500mg", "type": "text" },
+                { "key": "followUpNotes", "value": "Follow up after 7 days", "type": "text" },
+                { "key": "attachment", "type": "file", "src": "{{attachment_file_path}}" }
+              ]
+            },
+            "url": "{{base_url}}/patients/{{patient_id}}/medical-records"
+          }
+        },
+        {
+          "name": "Edit Medical Record Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/medical-records/{{medical_record_id}}/edit"
+          }
+        },
+        {
+          "name": "Update Medical Record (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "diagnosis", "value": "Updated diagnosis", "type": "text" },
+                { "key": "prescription", "value": "Updated prescription", "type": "text" },
+                { "key": "medicines", "value": "Ibuprofen 400mg", "type": "text" },
+                { "key": "followUpNotes", "value": "Monitor blood pressure daily", "type": "text" },
+                { "key": "attachment", "type": "file", "src": "{{attachment_file_path}}" }
+              ]
+            },
+            "url": "{{base_url}}/medical-records/{{medical_record_id}}"
+          }
+        },
+        {
+          "name": "Update Medical Record (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "diagnosis", "value": "Updated diagnosis", "type": "text" },
+                { "key": "prescription", "value": "Updated prescription", "type": "text" },
+                { "key": "medicines", "value": "Ibuprofen 400mg", "type": "text" },
+                { "key": "followUpNotes", "value": "Monitor blood pressure daily", "type": "text" }
+              ]
+            },
+            "url": "{{base_url}}/medical-records/{{medical_record_id}}"
+          }
+        },
+        {
+          "name": "Delete Medical Record",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/medical-records/{{medical_record_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "item": [
+        {
+          "name": "List Appointments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/appointments?patient_name={{patient_name}}&date={{appointment_date}}&time={{appointment_time}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transcription",
+      "item": [
+        {
+          "name": "Transcribe Medical Audio",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "audio", "type": "file", "src": "{{audio_file_path}}" }
+              ]
+            },
+            "url": "{{base_url}}/transcribe"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Settings Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/settings"
+          }
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "_token", "value": "{{csrf_token}}", "type": "text" },
+                { "key": "telegram_message_template", "value": "{{telegram_message_template}}", "type": "text" }
+              ]
+            },
+            "url": "{{base_url}}/settings"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" },
+    { "key": "username", "value": "doctor1" },
+    { "key": "password", "value": "password" },
+    { "key": "csrf_token", "value": "" },
+    { "key": "patient_id", "value": "1" },
+    { "key": "medical_record_id", "value": "1" },
+    { "key": "patient_name", "value": "" },
+    { "key": "appointment_date", "value": "" },
+    { "key": "appointment_time", "value": "" },
+    { "key": "telegram_message_template", "value": "Reminder: Dear {patient_name}, your appointment is on {date} at {time}." },
+    { "key": "attachment_file_path", "value": "C:/path/to/attachment.pdf" },
+    { "key": "audio_file_path", "value": "C:/path/to/audio.m4a" }
+  ]
+}

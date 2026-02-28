@@ -32,13 +32,28 @@ class MedicalRecordController extends Controller
             'details' => 'Initial Diagnosis created.'
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 201,
+                'data' => $record,
+            ], 201);
+        }
+
         return redirect()->route('patients.show', $data['patientID'])
                          ->with('success', 'Medical record added successfully.');
     }
 
-    public function edit(MedicalRecord $medicalRecord)
+    public function edit(\Illuminate\Http\Request $request, MedicalRecord $medicalRecord)
     {
         if ($medicalRecord->doctorID !== auth()->id()) abort(403);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $medicalRecord,
+            ], 200);
+        }
+
         return view('accounts.edit-record', compact('medicalRecord'));
     }
 
@@ -68,6 +83,13 @@ class MedicalRecordController extends Controller
             'details' => 'Diagnosis/Prescription updated.'
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $medicalRecord->fresh(),
+            ], 200);
+        }
+
         return redirect()->route('patients.show', $medicalRecord->patientID)
                          ->with('success', 'Medical record updated successfully.');
     }
@@ -91,6 +113,13 @@ class MedicalRecordController extends Controller
             'actionType' => 'Deleted Record',
             'details' => "Deleted record ID: {$medicalRecord->id}"
         ]);
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => 'Medical record deleted successfully.',
+            ], 200);
+        }
 
         return redirect()->route('patients.show', $patientID)
                          ->with('success', 'Medical record deleted successfully.');

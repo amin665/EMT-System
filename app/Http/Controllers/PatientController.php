@@ -19,6 +19,14 @@ class PatientController extends Controller
         }
 
         $patients = $patientsQuery->orderBy('fullName')->paginate(10)->withQueryString();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $patients,
+            ], 200);
+        }
+
         // CHANGED: patients.index -> accounts.index
         return view('accounts.index', compact('patients'));
     }
@@ -33,14 +41,30 @@ class PatientController extends Controller
     {
         $data = $request->validated();
         $data['createdBy'] = auth()->id();
-        Patient::create($data);
+        $patient = Patient::create($data);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 201,
+                'data' => $patient,
+            ], 201);
+        }
+
         return redirect()->route('patients.index')->with('success', 'Patient created successfully.');
     }
 
-    public function show(Patient $patient)
+    public function show(Request $request, Patient $patient)
     {
         if ($patient->createdBy !== auth()->id()) abort(403);
         $patient->load('medicalRecords');
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $patient,
+            ], 200);
+        }
+
         // CHANGED: patients.show -> accounts.show
         return view('accounts.show', compact('patient'));
     }
@@ -56,6 +80,14 @@ class PatientController extends Controller
     {
         if ($patient->createdBy !== auth()->id()) abort(403);
         $patient->update($request->validated());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => $patient->fresh(),
+            ], 200);
+        }
+
         return redirect()->route('patients.index')->with('success', 'Patient updated successfully.');
     }
 
@@ -63,6 +95,14 @@ class PatientController extends Controller
     {
         if ($patient->createdBy !== auth()->id()) abort(403);
         $patient->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'status_code' => 200,
+                'data' => 'Patient deleted successfully.',
+            ], 200);
+        }
+
         return redirect()->route('patients.index')->with('success', 'Patient deleted successfully.');
     }
 }
